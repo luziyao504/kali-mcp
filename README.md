@@ -1,5 +1,9 @@
 # kali-mcp
 
+[![CI](https://github.com/luziyao504/kali-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/luziyao504/kali-mcp/actions/workflows/ci.yml)
+![tools](https://img.shields.io/badge/tools-114-brightgreen)
+![license](https://img.shields.io/badge/license-MIT-blue)
+
 把一整台 **Kali Linux** 包装成一个标准 **MCP Server**：`git clone` → `install.sh` → 客户端填一个 URL，就能用自然语言驱动 Kali 做**系统维护**与**渗透测试**全流程。
 
 - **114 个工具**：执行/文件/任务、侦察/扫描、Web、凭据、利用、内网/AD、无线、取证、报告
@@ -14,7 +18,7 @@
 ## 1. 快速开始
 
 ```bash
-git clone https://github.com/<your-name>/kali-mcp.git
+git clone https://github.com/luziyao504/kali-mcp.git
 cd kali-mcp
 sudo bash install.sh          # 建 venv、装依赖、写 systemd、生成令牌、自检
 ```
