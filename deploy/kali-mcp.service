@@ -1,0 +1,19 @@
+[Unit]
+Description=kali-mcp - Kali 维护与渗透 MCP Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/kali-mcp
+Environment=KALI_MCP_BIND=0.0.0.0
+Environment=KALI_MCP_PORT=8765
+Environment=KALI_MCP_DATA=/opt/kali-mcp/data
+# 令牌放 EnvironmentFile，避免出现在 systemctl cat 的明文里
+EnvironmentFile=-/opt/kali-mcp/kali-mcp.env
+ExecStart=/opt/kali-mcp/venv/bin/kali-mcp
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

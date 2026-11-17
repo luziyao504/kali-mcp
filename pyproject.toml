@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kali-mcp"
+version = "1.0.0"
+description = "Kali Linux 维护与渗透测试的 MCP Server（90+ 工具，开箱即用）"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "kali-mcp contributors" }]
+keywords = ["mcp", "kali", "pentest", "security", "llm", "agent"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: POSIX :: Linux",
+]
+dependencies = [
+  "mcp>=1.2,<2",
+  "uvicorn>=0.30",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+kali-mcp = "kali_mcp.server:main"
+
+[tool.setuptools.packages.find]
+include = ["kali_mcp*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]

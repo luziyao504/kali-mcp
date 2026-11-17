@@ -1,0 +1,12 @@
+{
+  "_comment": "把这个文件的 mcpServers 段粘到客户端配置里（Cherry Studio / Claude Desktop / Cursor / Cline 通用）",
+  "mcpServers": {
+    "kali": {
+      "type": "streamableHttp",
+      "url": "http://192.168.31.137:8765/mcp",
+      "headers": {
+        "Authorization": "Bearer <安装时输出的令牌，或 cat /opt/kali-mcp/data/token.txt>"
+      }
+    }
+  }
+}

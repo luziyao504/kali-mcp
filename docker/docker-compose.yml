@@ -1,0 +1,22 @@
+services:
+  kali-mcp:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: kali-mcp:latest
+    container_name: kali-mcp
+    restart: unless-stopped
+    ports:
+      - "8765:8765"
+    volumes:
+      - kali-mcp-data:/data
+    # 需要用宿主机的网卡做扫描时，可加：
+    # network_mode: host
+    cap_add:
+      - NET_RAW       # nmap SYN 扫描 / 抓包
+      - NET_ADMIN
+    environment:
+      KALI_MCP_PORT: "8765"
+
+volumes:
+  kali-mcp-data:
