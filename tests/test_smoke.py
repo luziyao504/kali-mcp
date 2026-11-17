@@ -21,9 +21,10 @@ def eng(tmp_path):
 
 def test_engine_files(eng):
     p = os.path.join(eng.state_dir, "hello.txt")
-    eng.write_bytes(p, b"hello kali-mcp")
-    assert eng.read_bytes(p) == b"hello kali-mcp"
-    assert eng.stat_path(p)["size"] == 16
+    content = b"hello kali-mcp"
+    eng.write_bytes(p, content)
+    assert eng.read_bytes(p) == content
+    assert eng.stat_path(p)["size"] == len(content)
     assert os.listdir(eng.state_dir)
 
 
