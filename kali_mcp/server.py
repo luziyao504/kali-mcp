@@ -157,7 +157,7 @@ def http_app(mcp: FastMCP, token: str):
                 return JSONResponse({"ok": True, "server": "kali-mcp", "version": __version__})
             auth = request.headers.get("authorization", "")
             given = auth[7:].strip() if auth.lower().startswith("bearer ") else \
-                request.headers.get("x-mcp-token", "")
+                request.headers.get("x-mcp-token", "") or request.query_params.get("token", "")
             if not secrets.compare_digest(given, token):
                 return JSONResponse({"error": "unauthorized"}, status_code=401)
             return await call_next(request)
