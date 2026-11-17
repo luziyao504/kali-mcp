@@ -121,21 +121,27 @@ cat <<EOF
 
 ✅ 安装完成
   服务:      $SERVICE ($(systemctl is-active "$SERVICE"))，开机自启
-  监听:      $BIND:$PORT   路径 /mcp
+  监听:      $BIND:$PORT   路径 /mcp   （$BIND 是绑定地址，不能写进客户端 URL）
   令牌:      $TOKEN
   令牌文件:  $TOKEN_FILE (600)
-  本机地址:  http://${IP:-127.0.0.1}:$PORT/mcp
 
-客户端 mcpServers 配置：
+  客户端 URL 按你的位置选：
+    本机         http://127.0.0.1:$PORT/mcp        （只在 Kali 本机可用）
+    同内网机器   http://${IP:-<内网IP>}:$PORT/mcp   （跨网络不通，需 VPN/隧道）
+    VPN/隧道     用 VPN 分配的地址或隧道域名替换主机部分
+
+客户端 mcpServers 配置（以本机为例）：
 {
   "mcpServers": {
     "kali": {
       "type": "streamableHttp",
-      "url": "http://${IP:-127.0.0.1}:$PORT/mcp",
+      "url": "http://127.0.0.1:$PORT/mcp",
       "headers": { "Authorization": "Bearer $TOKEN" }
     }
   }
 }
+不支持自定义 Header 的客户端，把令牌写进 URL：
+    http://127.0.0.1:$PORT/mcp?token=$TOKEN
 
 常用命令：
   systemctl status $SERVICE
