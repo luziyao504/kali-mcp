@@ -28,9 +28,10 @@ sudo bash install.sh          # 建 venv、装依赖、写 systemd、生成令�
 ```
 ✅ 安装完成
   服务:      kali-mcp (active)，开机自启
-  监听:      0.0.0.0:8765   路径 /mcp
+  监听:      0.0.0.0:8765   路径 /mcp      ← 绑定地址，不是可访问地址
   令牌:      xxxxxxxx
-  本机地址:  http://192.168.31.137:8765/mcp
+  本机地址:  http://127.0.0.1:8765/mcp     ← 只在 Kali 本机可用
+  内网地址:  http://<Kali内网IP>:8765/mcp  ← 同内网机器用（ip -4 addr show 查）
 ```
 
 常用运维：
@@ -58,6 +59,18 @@ docker logs kali-mcp | grep 令牌     # 首次启动自动生成，或看挂载
 
 ### 客户端配置
 
+先确定 **URL 里该填哪个地址**，这一步最容易写错：
+
+| 客户端在哪 | URL 填什么 | 说明 |
+| --- | --- | --- |
+| Kali 本机（同一台机器） | `http://127.0.0.1:8765/mcp` | 走回环，不出网卡；最快最稳 |
+| Kali 所在内网的其它机器 | `http://<Kali内网IP>:8765/mcp`，如 `http://192.168.1.50:8765/mcp` | 用 `ip -4 addr show` 查，一般是 `192.168.x.x` / `10.x.x.x` |
+| 外网、跨网络、云主机 | 内网 IP **一定不通** | 需要 ZeroTier/WireGuard 之类的 VPN，或 frp/隧道；见下方"跨网络访问" |
+
+> ⚠️ **`0.0.0.0` 不能写进客户端 URL。** 它是服务端"监听所有网卡"的绑定地址（`--host 0.0.0.0`），
+> 不是一条可访问的地址。客户端里必须写具体 IP 或域名。
+> `127.0.0.1` 只能在同一台 Kali 上用——别的机器访问它，指向的是那台机器自己。
+
 **HTTP 模式（推荐，一个服务多客户端同时用）**
 
 ```json
@@ -65,12 +78,28 @@ docker logs kali-mcp | grep 令牌     # 首次启动自动生成，或看挂载
   "mcpServers": {
     "kali": {
       "type": "streamableHttp",
-      "url": "http://192.168.31.137:8765/mcp",
+      "url": "http://127.0.0.1:8765/mcp",
       "headers": { "Authorization": "Bearer <你的令牌>" }
     }
   }
 }
 ```
+
+把 `127.0.0.1` 换成上表里对应你场景的地址即可。令牌两种传法任选其一（服务端都认）：
+
+- 请求头：`"headers": { "Authorization": "Bearer <你的令牌>" }`
+- 写进 URL：`http://127.0.0.1:8765/mcp?token=<你的令牌>`（适合不支持自定义 Header 的客户端）
+
+**跨网络访问（本机不在 Kali 的内网里）**
+
+内网 IP 对外不可达，二选一：
+
+1. **VPN（推荐）**：Kali 和客户端都加入同一 ZeroTier/WireGuard 网络，然后用 VPN 分给 Kali 的地址：
+   ```json
+   { "url": "http://10.147.20.5:8765/mcp?token=<你的令牌>" }
+   ```
+2. **隧道**：`cloudflared tunnel --url http://127.0.0.1:8765` 或自建 frp，拿到公网域名后用该域名替换地址。
+   注意 `cloudflared` 的临时域名会变、跨境链路可能抖，长期用建议自有域名或 frp。
 
 **stdio 模式（Claude Desktop 这类只支持本地进程的客户端）**
 
